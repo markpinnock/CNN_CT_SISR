@@ -11,10 +11,10 @@ def dnResNetBlock(nc, inputlayer, upsamp):
     pool = keras.layers.Conv3D(nc, (2, 2, 1), strides=(2, 2, 1), padding='same', activation='relu')(conv2)
     
     if upsamp == 2:
-        skip = keras.layers.Conv3DTranspose(nc, (1, 1, 3), (1, 1, 2), padding='same', activation='relu')(BN2)
+        skip = keras.layers.Conv3DTranspose(nc, (1, 1, 3), (1, 1, 2), padding='same', activation='relu')(conv2)
         skip = keras.layers.Conv3DTranspose(nc, (1, 1, 3), (1, 1, 2), padding='same', activation='relu')(skip)
     elif upsamp == 1:
-        skip = keras.layers.Conv3DTranspose(nc, (1, 1, 3), (1, 1, 2), padding='same', activation='relu')(BN2)
+        skip = keras.layers.Conv3DTranspose(nc, (1, 1, 3), (1, 1, 2), padding='same', activation='relu')(conv2)
     else:
         skip = conv2
 
