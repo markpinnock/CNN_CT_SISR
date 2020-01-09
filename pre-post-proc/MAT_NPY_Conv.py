@@ -63,9 +63,9 @@ for i in range(N):
             
                 plt.close()
         
-        np.save(save_path + "Hi/" + hi_list[i][:-4] + ".npy", hvol)
+        np.save(save_path + "Sim_Hi/" + hi_list[i][:-4] + ".npy", hvol)
         np.save(save_path + "Sim_Lo/" + lo_list[i][:-4] + ".npy", lvol)
         print(f"{hi_list[i][:-4]}.npy, {lo_list[i][:-4]}.npy CONVERTED")
 
-if len(os.listdir(save_path + "Hi/")) != len(os.listdir(save_path + "Sim_Lo/")):
+if len(os.listdir(save_path + "Sim_Hi/")) != len(os.listdir(save_path + "Sim_Lo/")):
     raise ValueError("Unequal number of converted vols")

@@ -17,7 +17,7 @@ function simLoResGen(file_path, save_path)
     gauss_mn = 0;
     gauss_s = 1;
 
-    for i = 4:4%length(subject_list)
+    for i = 1:length(subject_list)
         curr_path = strcat(file_path, '\', subject_list(i).name);
         subject_name = char(subject_list(i).name);
         
