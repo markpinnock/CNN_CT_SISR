@@ -19,13 +19,12 @@ def imgLoader(hi_path, lo_path, hi_list, lo_list, shuffle_flag):
     while i < N:
         try:
             lo_name = lo_list[i].decode("utf-8")
-
             lo_vol = np.load(lo_path + lo_name).astype(np.float32)
-            lo_vol = lo_vol[::8, ::8, :]
+            # lo_vol = lo_vol[::8, ::8, :]
 
             hi_name = lo_name[:-5] + "H.npy"
             hi_vol = np.load(hi_path  + hi_name).astype(np.float32)
-            hi_vol = hi_vol[::8, ::8, :]
+            # hi_vol = hi_vol[::8, ::8, :]
 
         except Exception as e:
             print(f"IMAGE LOAD FAILURE: {lo_name} {hi_name} ({e})")
