@@ -53,6 +53,6 @@ def UNetGen(input_shape, starting_channels):
     upres2 = upResNetBlock(nc * 2, upres3, upSampModule(skip2, nc * 2, 1), (2, 2, 2))
     upres1 = upResNetBlock(nc, upres2, upSampModule(skip1, nc, 2), (2, 2, 2))
 
-    outputlayer = keras.layers.Conv3D(1, (1, 1, 1), strides=(1, 1, 1), padding='same', activation='sigmoid')(upres1)
+    outputlayer = keras.layers.Conv3D(1, (1, 1, 1), strides=(1, 1, 1), padding='same', activation='linear')(upres1)
 
     return keras.Model(inputs=inputlayer, outputs=outputlayer)
