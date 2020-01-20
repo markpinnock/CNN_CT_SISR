@@ -11,7 +11,7 @@ import tensorflow as tf
 import time
 
 sys.path.append('..')
-sys.path.append('/home/mpinnock/CNN_3D_SISR/scripts/')
+sys.path.append('/home/mpinnock/SISR/010_CNN_SISR/')
 
 from Networks import UNetGen
 from utils.DataLoader import imgLoader
@@ -187,6 +187,8 @@ for epoch in range(EPOCHS):
     fig.subplots_adjust(wspace=0.025, hspace=0.1)
     plt.savefig(f"{IMAGE_SAVE_PATH}/Epoch_{epoch + 1}.png", dpi=250)
     plt.close()
+
+UNet.save_weights(f"{MODEL_SAVE_PATH}{EXPT_NAME}.ckpt")
 
 log_file.write(f"Time: {(time.time() - start_time) / 60:.2f} min\n")
 log_file.close()
