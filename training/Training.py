@@ -15,7 +15,7 @@ sys.path.append('/home/mpinnock/SISR/010_CNN_SISR/')
 
 from Networks import UNetGen
 from utils.DataLoader import imgLoader
-from utils.TrainFuncs import trainStep, valStep
+from utils.TrainFuncs import trainStep, valStep, imgQualityMetrics
 
 
 # Handle arguments
@@ -145,6 +145,10 @@ train_metric = keras.metrics.MeanSquaredError()
 val_metric = keras.metrics.MeanSquaredError()
 Optimiser = keras.optimizers.Adam(ETA)
 
+# Create image quality metrics
+val_pSNR = 0
+val_SSIM = 0
+
 # Set start time
 start_time = time.time()
 
@@ -157,6 +161,13 @@ for epoch in range(EPOCHS):
     if NUM_FOLDS > 0:
         for hi_vol, lo_vol in val_ds.batch(MB_SIZE):
             valStep(lo_vol, hi_vol, UNet, val_metric)
+
+            # If last epoch, calculate image quality metrics
+            # if epoch == EPOCHS - 1:
+            #     pred = UNet(lo_vol, training=False)
+            #     pSNR, SSIM = imgQualityMetrics(pred, hi_vol)
+            #     val_pSNR += pSNR
+            #     val_SSIM += SSIM
 
     # Print losses every epoch
     print(f"Epoch: {epoch + 1}, Train Loss: {train_metric.result()}, Val Loss: {val_metric.result()}")
@@ -173,7 +184,7 @@ for epoch in range(EPOCHS):
                 hi_vol = data[0]
                 lo_vol = data[1]
 
-            pred = UNet(lo_vol[np.newaxis, ...])
+            pred = UNet(lo_vol[np.newaxis, ...], training=False)
 
             axs[0, j].imshow(np.fliplr(lo_vol[:, :, 1, 0].T), cmap='gray', vmin=0.12, vmax=0.18, origin='lower')
             axs[0, j].axis('off')
@@ -191,5 +202,6 @@ for epoch in range(EPOCHS):
 if NUM_FOLDS == 0:
     UNet.save_weights(f"{MODEL_SAVE_PATH}{EXPT_NAME}.ckpt")
 
+log_file.write(f"pSNR: {val_pSNR / len(hi_val)}, SSIM: {val_SSIM / len(hi_val)}")
 log_file.write(f"Time: {(time.time() - start_time) / 60:.2f} min\n")
 log_file.close()

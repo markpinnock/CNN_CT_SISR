@@ -1,5 +1,18 @@
+import skimage.measure as sk
 import tensorflow as tf
 import tensorflow.keras as keras
+
+
+def imgQualityMetrics(pred, hi_vol):
+    dims = pred.shape
+    pSNR = 0
+    SSIM = 0
+
+    for idx in list(range(dims[0])):
+        pSNR += sk.compare_psnr(hi_vol[idx, :, :, :, 0], pred[idx, :, :, :, 0])
+        SSIM += sk.compare_ssim(hi_vol[idx, :, :, :, 0], pred[idx, :, :, :, 0])
+
+    return pSNR, SSIM
 
 
 @tf.function
