@@ -188,7 +188,8 @@ for epoch in range(EPOCHS):
     plt.savefig(f"{IMAGE_SAVE_PATH}/Epoch_{epoch + 1}.png", dpi=250)
     plt.close()
 
-UNet.save_weights(f"{MODEL_SAVE_PATH}{EXPT_NAME}.ckpt")
+if NUM_FOLDS == 0:
+    UNet.save_weights(f"{MODEL_SAVE_PATH}{EXPT_NAME}.ckpt")
 
 log_file.write(f"Time: {(time.time() - start_time) / 60:.2f} min\n")
 log_file.close()
