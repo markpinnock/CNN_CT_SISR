@@ -175,29 +175,30 @@ for epoch in range(EPOCHS):
     train_metric.reset_states()
     val_metric.reset_states()
 
-    # Generate example images and save
-    fig, axs = plt.subplots(4, NUM_EX)
-    
-    for i in range(4):
-        for j in range(NUM_EX):
-            for data in imgLoader(hi_path.encode("utf-8"), lo_path.encode("utf-8"), [hi_examples[j]], [lo_examples[j]], False):
-                hi_vol = data[0]
-                lo_vol = data[1]
+    if (epoch + 1) % 100 == 0:
+        # Generate example images and save
+        fig, axs = plt.subplots(4, NUM_EX)
+        
+        for i in range(4):
+            for j in range(NUM_EX):
+                for data in imgLoader(hi_path.encode("utf-8"), lo_path.encode("utf-8"), [hi_examples[j]], [lo_examples[j]], False):
+                    hi_vol = data[0]
+                    lo_vol = data[1]
 
-            pred = UNet(lo_vol[np.newaxis, ...], training=False)
+                pred = UNet(lo_vol[np.newaxis, ...], training=False)
 
-            axs[0, j].imshow(np.fliplr(lo_vol[:, :, 1, 0].T), cmap='gray', vmin=0.12, vmax=0.18, origin='lower')
-            axs[0, j].axis('off')
-            axs[1, j].imshow(np.fliplr(pred[0, :, :, 5, 0].numpy().T), cmap='gray', vmin=0.12, vmax=0.18, origin='lower')
-            axs[1, j].axis('off')
-            axs[2, j].imshow(np.fliplr(hi_vol[:, :, 5, 0].T), cmap='gray', vmin=0.12, vmax=0.18, origin='lower')
-            axs[2, j].axis('off')
-            axs[3, j].imshow(np.fliplr(hi_vol[:, :, 5, 0].T - pred[0, :, :, 5, 0].numpy().T), cmap='hot', origin='lower')
-            axs[3, j].axis('off')
+                axs[0, j].imshow(np.fliplr(lo_vol[:, :, 1, 0].T), cmap='gray', vmin=0.12, vmax=0.18, origin='lower')
+                axs[0, j].axis('off')
+                axs[1, j].imshow(np.fliplr(pred[0, :, :, 5, 0].numpy().T), cmap='gray', vmin=0.12, vmax=0.18, origin='lower')
+                axs[1, j].axis('off')
+                axs[2, j].imshow(np.fliplr(hi_vol[:, :, 5, 0].T), cmap='gray', vmin=0.12, vmax=0.18, origin='lower')
+                axs[2, j].axis('off')
+                axs[3, j].imshow(np.fliplr(hi_vol[:, :, 5, 0].T - pred[0, :, :, 5, 0].numpy().T), cmap='hot', origin='lower')
+                axs[3, j].axis('off')
 
-    fig.subplots_adjust(wspace=0.025, hspace=0.1)
-    plt.savefig(f"{IMAGE_SAVE_PATH}/Epoch_{epoch + 1}.png", dpi=250)
-    plt.close()
+        fig.subplots_adjust(wspace=0.025, hspace=0.1)
+        plt.savefig(f"{IMAGE_SAVE_PATH}/Epoch_{epoch + 1}.png", dpi=250)
+        plt.close()
 
 if NUM_FOLDS == 0:
     UNet.save_weights(f"{MODEL_SAVE_PATH}{EXPT_NAME}.ckpt")
