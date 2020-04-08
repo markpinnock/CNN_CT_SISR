@@ -18,9 +18,7 @@ l
 def trainStep(lo_vol, hi_vol, Model, ModelOptimiser, model_loss, model_metric):
     with tf.GradientTape() as tape:
         pred = Model(lo_vol, training=True)
-        mask = hi_vol > 0.2
-        losses = model_loss(pred, hi_vol) +\
-            100 * model_loss(tf.boolean_mask(pred, mask), tf.boolean_mask(hi_vol, mask))
+        losses = model_loss(pred, hi_vol)
         gradients = tape.gradient(losses, Model.trainable_variables)
         ModelOptimiser.apply_gradients(zip(gradients, Model.trainable_variables))
         model_metric.update_state(pred, hi_vol)
