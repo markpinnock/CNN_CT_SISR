@@ -15,7 +15,7 @@ sys.path.append('/home/mpinnock/SISR/010_CNN_SISR/')
 
 from Networks import UNetGen
 from utils.DataLoader import imgLoader
-from utils.TrainFuncs import trainStep, valStep, imgQualityMetrics
+from utils.TrainFuncs import trainStep, valStep
 
 
 # Handle arguments
@@ -34,7 +34,7 @@ arguments = parser.parse_args()
 
 # Generate file path and data path
 if arguments.file_path == None:
-    FILE_PATH = "C:/Users/rmappin/OneDrive - University College London/PhD/PhD_Prog/010_CNN_SISR/"
+    FILE_PATH = "C:/Users/roybo/OneDrive - University College London/PhD/PhD_Prog/010_CNN_SISR/"
 else:
     FILE_PATH = arguments.file_path
 
@@ -75,7 +75,7 @@ if not os.path.exists(IMAGE_SAVE_PATH):
 
 # Open log file
 if arguments.file_path == None:
-    LOG_SAVE_PATH = f"{FILE_PATH}/"
+    LOG_SAVE_PATH = f"{FILE_PATH}reports/"
 else:
     LOG_SAVE_PATH = f"{FILE_PATH}reports/"
 
@@ -202,6 +202,6 @@ for epoch in range(EPOCHS):
 if NUM_FOLDS == 0:
     UNet.save_weights(f"{MODEL_SAVE_PATH}{EXPT_NAME}.ckpt")
 
-log_file.write(f"pSNR: {val_pSNR / len(hi_val)}, SSIM: {val_SSIM / len(hi_val)}")
+# log_file.write(f"pSNR: {val_pSNR / len(hi_val)}, SSIM: {val_SSIM / len(hi_val)}")
 log_file.write(f"Time: {(time.time() - start_time) / 60:.2f} min\n")
 log_file.close()
