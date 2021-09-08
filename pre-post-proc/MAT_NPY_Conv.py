@@ -63,8 +63,8 @@ for i in range(N):
             
                 plt.close()
         
-        np.save(save_path + "Sim_Hi/" + hi_list[i][:-4] + ".npy", hvol)
-        np.save(save_path + "Sim_Lo/" + lo_list[i][:-4] + ".npy", lvol)
+        # np.save(save_path + "Sim_Hi/" + hi_list[i][:-4] + ".npy", hvol)
+        # np.save(save_path + "Sim_Lo/" + lo_list[i][:-4] + ".npy", lvol)
         print(f"{hi_list[i][:-4]}.npy, {lo_list[i][:-4]}.npy CONVERTED")
 
 if len(os.listdir(save_path + "Sim_Hi/")) != len(os.listdir(save_path + "Sim_Lo/")):

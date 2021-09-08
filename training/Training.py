@@ -15,7 +15,7 @@ sys.path.append('/home/mpinnock/SISR/010_CNN_SISR/')
 
 from Networks import UNetGen
 from utils.DataLoader import imgLoader
-from utils.TrainFuncs import trainStep, valStep
+from utils.TrainFuncs import imgQualityMetrics, trainStep, valStep
 
 
 # Handle arguments
@@ -127,11 +127,11 @@ else:
 
 # Create dataset
 train_ds = tf.data.Dataset.from_generator(
-    imgLoader, args=[hi_path, lo_path, hi_train, lo_train, True], output_types=(tf.float32, tf.float32))
+    imgLoader, args=[hi_path, lo_path, hi_train, lo_train, True, False], output_types=(tf.float32, tf.float32))
 
 if NUM_FOLDS > 0:
     val_ds = tf.data.Dataset.from_generator(
-        imgLoader, args=[hi_path, lo_path, hi_val, lo_val, False], output_types=(tf.float32, tf.float32))
+        imgLoader, args=[hi_path, lo_path, hi_val, lo_val, False, False], output_types=(tf.float32, tf.float32))
 
 # Initialise model
 UNet = UNetGen(input_shape=LO_VOL_SIZE, starting_channels=NC)
@@ -163,11 +163,11 @@ for epoch in range(EPOCHS):
             valStep(lo_vol, hi_vol, UNet, val_metric)
 
             # If last epoch, calculate image quality metrics
-            # if epoch == EPOCHS - 1:
-            #     pred = UNet(lo_vol, training=False)
-            #     pSNR, SSIM = imgQualityMetrics(pred, hi_vol)
-            #     val_pSNR += pSNR
-            #     val_SSIM += SSIM
+            if epoch == EPOCHS - 1:
+                pred = UNet(lo_vol, training=False)
+                pSNR, SSIM = imgQualityMetrics(pred, hi_vol)
+                val_pSNR += pSNR
+                val_SSIM += SSIM
 
     # Print losses every epoch
     print(f"Epoch: {epoch + 1}, Train Loss: {train_metric.result()}, Val Loss: {val_metric.result()}")
@@ -175,13 +175,13 @@ for epoch in range(EPOCHS):
     train_metric.reset_states()
     val_metric.reset_states()
 
-    if (epoch + 1) % 100 == 0:
+    if (epoch + 1) % EPOCHS == 0:
         # Generate example images and save
         fig, axs = plt.subplots(4, NUM_EX)
         
         for i in range(4):
             for j in range(NUM_EX):
-                for data in imgLoader(hi_path.encode("utf-8"), lo_path.encode("utf-8"), [hi_examples[j]], [lo_examples[j]], False):
+                for data in imgLoader(hi_path.encode("utf-8"), lo_path.encode("utf-8"), [hi_examples[j]], [lo_examples[j]], False, False):
                     hi_vol = data[0]
                     lo_vol = data[1]
 
@@ -202,7 +202,8 @@ for epoch in range(EPOCHS):
 
 if NUM_FOLDS == 0:
     UNet.save_weights(f"{MODEL_SAVE_PATH}{EXPT_NAME}.ckpt")
+else:
+    log_file.write(f"pSNR: {val_pSNR / len(hi_val)}, SSIM: {val_SSIM / len(hi_val)}")
 
-# log_file.write(f"pSNR: {val_pSNR / len(hi_val)}, SSIM: {val_SSIM / len(hi_val)}")
 log_file.write(f"Time: {(time.time() - start_time) / 60:.2f} min\n")
 log_file.close()

@@ -4,7 +4,7 @@ import random
 import tensorflow as tf
 
 
-def imgLoader(hi_path, lo_path, hi_list, lo_list, shuffle_flag):
+def imgLoader(hi_path, lo_path, hi_list, lo_list, shuffle_flag, test_flag):
     hi_path = hi_path.decode("utf-8")
     lo_path = lo_path.decode("utf-8")
 
@@ -21,7 +21,11 @@ def imgLoader(hi_path, lo_path, hi_list, lo_list, shuffle_flag):
             lo_name = lo_list[i].decode("utf-8")
             lo_vol = np.load(lo_path + lo_name).astype(np.float32)
 
-            hi_name = lo_name[:-5] + "H.npy"
+            if test_flag:
+                hi_name = hi_list[i].decode("utf-8")
+            else:
+                hi_name = lo_name[:-5] + "H.npy"
+
             hi_vol = np.load(hi_path  + hi_name).astype(np.float32)
 
         except Exception as e:
